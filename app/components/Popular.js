@@ -36,7 +36,7 @@ export default class Popular extends React.Component {
 
     this.state = {
       selectedLanguage: 'All',
-      repos: null,
+      repos: {},
       error: null,
     };
 
@@ -44,35 +44,42 @@ export default class Popular extends React.Component {
     this.isLoading = this.isLoading.bind(this);
   }
 
+  componentDidMount() {
+    const { selectedLanguage } = this.state;
+    this.updateLanguage(selectedLanguage);
+  }
+
   updateLanguage(selectedLanguage) {
     this.setState({
       selectedLanguage,
-      repos: null,
       error: null,
     });
 
-    fetchPopularRepos(selectedLanguage)
-      .then((repos) => {
-        this.setState({
-          repos,
-          error: null,
-        });
-      })
-      .catch((error) => {
-        console.warn('Error fetching the repos: ', error);
+    if (!this.state.repos[selectedLanguage]) {
+      fetchPopularRepos(selectedLanguage)
+        .then((data) => {
+          this.setState(({ repos }) => ({
+            repos: {
+              ...repos,
+              [selectedLanguage]: data,
+            },
+          }));
+        })
+        .catch(() => {
+          console.warn('Error fetching repos: ', this.state.error);
 
-        this.setState({
-          error: 'There was an error fetching the repositories',
+          this.setState({
+            error: 'There was an error fetching the repositories.',
+          });
         });
-      });
+    }
   }
 
-  componentDidMount(){
-    this.updateLanguage(this.state.selectedLanguage);
-  }
 
   isLoading() {
-    return this.state.error === null && this.state.repos === null;
+    const { selectedLanguage, repos, error } = this.state;
+
+    return !repos[selectedLanguage] && error === null;
   }
 
   render() {
@@ -85,7 +92,7 @@ export default class Popular extends React.Component {
         />
         {this.isLoading() && <p>LOADING</p>}
         {error && <p>{error}</p>}
-        {repos && <pre>{JSON.stringify(repos, null, 2)}</pre>}
+        {repos && <pre>{JSON.stringify(repos[selectedLanguage], null, 2)}</pre>}
       </>
     );
   }

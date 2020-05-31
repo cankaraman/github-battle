@@ -88,35 +88,41 @@ export default class Results extends React.Component {
     if (error) {
       return <p className="center-text error">{error}</p>;
     }
-    // winStatus={winner.score === loser.score ? 'Tie' : 'Winner'}
-    // winStatus=
     return (
-      <div className="grid space-around container-sm">
-
-        <Card
-          header={winner.score === loser.score ? 'Tie' : 'Winner'}
-          subheader={`Score: ${winner.score}`}
-          avatar={winner.profile.avatar_url}
-          name={winner.profile.name}
-          href={winner.profile.html_url}
+      <>
+        <div className="grid space-around container-sm">
+          <Card
+            header={winner.score === loser.score ? 'Tie' : 'Winner'}
+            subheader={`Score: ${winner.score}`}
+            avatar={winner.profile.avatar_url}
+            name={winner.profile.name}
+            href={winner.profile.html_url}
+          >
+            <ProfileList player={winner} />
+          </Card>
+          <Card
+            header={winner.score === loser.score ? 'Tie' : 'Loser'}
+            subheader={`Score: ${loser.score}`}
+            avatar={loser.profile.avatar_url}
+            name={loser.profile.name}
+            href={loser.profile.html_url}
+          >
+            <ProfileList player={loser} />
+          </Card>
+        </div>
+        <button
+          className="btn dark-btn btn-space"
+          onClick={this.props.onReset}
         >
-          <ProfileList player={winner} />
-        </Card>
-        <Card
-          header={winner.score === loser.score ? 'Tie' : 'Loser'}
-          subheader={`Score: ${loser.score}`}
-          avatar={loser.profile.avatar_url}
-          name={loser.profile.name}
-          href={loser.profile.html_url}
-        >
-          <ProfileList player={loser} />
-        </Card>
-      </div>
+          Reset
+        </button>
+      </>
     );
   }
 }
 
 Results.propTypes = {
-  playerOne: PropTypes.object.isRequired,
-  playerTwo: PropTypes.object.isRequired,
+  playerOne: PropTypes.string.isRequired,
+  playerTwo: PropTypes.string.isRequired,
+  onReset: PropTypes.func.isRequired,
 };

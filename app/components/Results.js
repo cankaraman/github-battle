@@ -5,64 +5,43 @@ import {
 } from 'react-icons/fa';
 import { battle } from '../utils/api';
 
-function Profile({ player, winStatus }) {
+function ProfileList({ player }) {
   return (
-    <div className="card bg-light">
-      <h4 className="header-lg center-text">
-        {winStatus}
-      </h4>
-      <img
-        className="avatar"
-        src={player.profile.avatar_url}
-        alt={`Avatar for ${player.profile.login}`}
-      />
-      <h4 className="center-text">
-        Score:
-        {' '}
-        {player.score.toLocaleString()}
-      </h4>
-      <h2 className="center-text">
-        <a className="link" href={player.profile.html_url}>
-          {player.profile.login}
-        </a>
-      </h2>
-      <ul className="card-list">
-        <li>
-          <FaUser color="rgb(239, 155, 155)" size={22} />
-          {player.profile.name}
-        </li>
-        {player.profile.location && (
-          <li>
-            <FaCompass color="rgb(144, 115, 255)" size={22} />
-              {player.profile.location}
-          </li>
-        )}
-        {player.profile.company && (
+    <ul className="card-list">
+      <li>
+        <FaUser color="rgb(239, 155, 155)" size={22} />
+        {player.profile.name}
+      </li>
+      {player.profile.location && (
+      <li>
+        <FaCompass color="rgb(144, 115, 255)" size={22} />
+        {player.profile.location}
+      </li>
+      )}
+      {player.profile.company && (
         <li>
           <FaBriefcase color="#795548" size={22} />
           {player.profile.company}
         </li>
-        )}
-        <li>
-          <FaUsers color="rgb(129, 195, 245)" size={22} />
-          {player.profile.followers.toLocaleString()}
-          {' '}
-          followers
-        </li>
-        <li>
-          <FaUserFriends color="rgb(64, 183, 95)" size={22} />
-          {player.profile.following.toLocaleString()}
-          {' '}
-          following
-        </li>
-      </ul>
-    </div>
+      )}
+      <li>
+        <FaUsers color="rgb(129, 195, 245)" size={22} />
+        {player.profile.followers.toLocaleString()}
+        {' '}
+        followers
+      </li>
+      <li>
+        <FaUserFriends color="rgb(64, 183, 95)" size={22} />
+        {player.profile.following.toLocaleString()}
+        {' '}
+        following
+      </li>
+    </ul>
   );
 }
 
-Profile.propTypes = {
+ProfileList.propTypes = {
   player: PropTypes.object.isRequired,
-  winStatus: PropTypes.string.isRequired,
 };
 
 export default class Results extends React.Component {
@@ -107,11 +86,12 @@ export default class Results extends React.Component {
     if (error) {
       return <p className="center-text error">{error}</p>;
     }
-
+    // winStatus={winner.score === loser.score ? 'Tie' : 'Winner'}
+    // winStatus={winner.score === loser.score ? 'Tie' : 'Loser'}
     return (
       <div className="grid space-around container-sm">
-        <Profile player={winner} winStatus={winner.score === loser.score ? 'Tie' : 'Winner'} />
-        <Profile player={loser} winStatus={winner.score === loser.score ? 'Tie' : 'Loser'} />
+        <ProfileList player={winner} />
+        <ProfileList player={loser} />
       </div>
     );
   }

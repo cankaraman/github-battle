@@ -1,9 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  FaCompass, FaBriefcase, FaUsers, FaUserFriends, FaCode, FaUser,
+  FaCompass, FaBriefcase, FaUsers, FaUserFriends, FaUser,
 } from 'react-icons/fa';
+// FaCode,
 import { battle } from '../utils/api';
+import Card from './Card';
 
 function ProfileList({ player }) {
   return (
@@ -87,12 +89,34 @@ export default class Results extends React.Component {
       return <p className="center-text error">{error}</p>;
     }
     // winStatus={winner.score === loser.score ? 'Tie' : 'Winner'}
-    // winStatus={winner.score === loser.score ? 'Tie' : 'Loser'}
+    // winStatus=
     return (
       <div className="grid space-around container-sm">
-        <ProfileList player={winner} />
-        <ProfileList player={loser} />
+
+        <Card
+          header={winner.score === loser.score ? 'Tie' : 'Winner'}
+          subheader={`Score: ${winner.score}`}
+          avatar={winner.profile.avatar_url}
+          name={winner.profile.name}
+          href={winner.profile.html_url}
+        >
+          <ProfileList player={winner} />
+        </Card>
+        <Card
+          header={winner.score === loser.score ? 'Tie' : 'Loser'}
+          subheader={`Score: ${loser.score}`}
+          avatar={loser.profile.avatar_url}
+          name={loser.profile.name}
+          href={loser.profile.html_url}
+        >
+          <ProfileList player={loser} />
+        </Card>
       </div>
     );
   }
 }
+
+Results.propTypes = {
+  playerOne: PropTypes.object.isRequired,
+  playerTwo: PropTypes.object.isRequired,
+};

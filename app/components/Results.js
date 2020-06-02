@@ -6,6 +6,7 @@ import {
 // FaCode,
 import { battle } from '../utils/api';
 import Card from './Card';
+import Loading from './Loading';
 
 function ProfileList({ player }) {
   return (
@@ -82,7 +83,7 @@ export default class Results extends React.Component {
     } = this.state;
 
     if (loading) {
-      return <p>LOADING</p>;
+      return <Loading text="Battling" />;
     }
 
     if (error) {
@@ -95,7 +96,7 @@ export default class Results extends React.Component {
             header={winner.score === loser.score ? 'Tie' : 'Winner'}
             subheader={`Score: ${winner.score}`}
             avatar={winner.profile.avatar_url}
-            name={winner.profile.name}
+            name={winner.profile.login}
             href={winner.profile.html_url}
           >
             <ProfileList player={winner} />
@@ -104,7 +105,7 @@ export default class Results extends React.Component {
             header={winner.score === loser.score ? 'Tie' : 'Loser'}
             subheader={`Score: ${loser.score}`}
             avatar={loser.profile.avatar_url}
-            name={loser.profile.name}
+            name={loser.profile.login}
             href={loser.profile.html_url}
           >
             <ProfileList player={loser} />

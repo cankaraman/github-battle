@@ -1,14 +1,14 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
 const styles = {
   content: {
-    fontSize: '35px',
-    position: 'absolute',
-    left: '0',
-    right: '0',
-    marginTop: '20px',
-    textAlign: 'center',
+    fontSize: "35px",
+    position: "absolute",
+    left: "0",
+    right: "0",
+    marginTop: "20px",
+    textAlign: "center",
   },
 };
 
@@ -35,20 +35,16 @@ export default class Loading extends React.Component {
   }
 
   render() {
-    return (
-      <p style={styles.content}>
-        {this.state.content}
-      </p>
-
-    );
+    return <p style={styles.content}>{this.state.content}</p>;
   }
 }
+
 Loading.propTypes = {
   text: PropTypes.string,
   speed: PropTypes.number,
 };
 
 Loading.defaultProps = {
-  text: 'Loading',
+  text: "Loading",
   speed: 300,
 };

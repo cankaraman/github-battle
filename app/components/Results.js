@@ -1,12 +1,16 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 import {
-  FaCompass, FaBriefcase, FaUsers, FaUserFriends, FaUser,
-} from 'react-icons/fa';
+  FaCompass,
+  FaBriefcase,
+  FaUsers,
+  FaUserFriends,
+  FaUser,
+} from "react-icons/fa";
 // FaCode,
-import { battle } from '../utils/api';
-import Card from './Card';
-import Loading from './Loading';
+import { battle } from "../utils/api";
+import Card from "./Card";
+import Loading from "./Loading";
 
 function ProfileList({ player }) {
   return (
@@ -16,10 +20,10 @@ function ProfileList({ player }) {
         {player.profile.name}
       </li>
       {player.profile.location && (
-      <li>
-        <FaCompass color="rgb(144, 115, 255)" size={22} />
-        {player.profile.location}
-      </li>
+        <li>
+          <FaCompass color="rgb(144, 115, 255)" size={22} />
+          {player.profile.location}
+        </li>
       )}
       {player.profile.company && (
         <li>
@@ -29,15 +33,11 @@ function ProfileList({ player }) {
       )}
       <li>
         <FaUsers color="rgb(129, 195, 245)" size={22} />
-        {player.profile.followers.toLocaleString()}
-        {' '}
-        followers
+        {player.profile.followers.toLocaleString()} followers
       </li>
       <li>
         <FaUserFriends color="rgb(64, 183, 95)" size={22} />
-        {player.profile.following.toLocaleString()}
-        {' '}
-        following
+        {player.profile.following.toLocaleString()} following
       </li>
     </ul>
   );
@@ -69,7 +69,8 @@ export default class Results extends React.Component {
           error: null,
           loading: false,
         });
-      }).catch(({ message }) => {
+      })
+      .catch(({ message }) => {
         this.setState({
           error: message,
           loading: false,
@@ -78,9 +79,7 @@ export default class Results extends React.Component {
   }
 
   render() {
-    const {
-      winner, loser, error, loading,
-    } = this.state;
+    const { winner, loser, error, loading } = this.state;
 
     if (loading) {
       return <Loading text="Battling" />;
@@ -93,7 +92,7 @@ export default class Results extends React.Component {
       <>
         <div className="grid space-around container-sm">
           <Card
-            header={winner.score === loser.score ? 'Tie' : 'Winner'}
+            header={winner.score === loser.score ? "Tie" : "Winner"}
             subheader={`Score: ${winner.score}`}
             avatar={winner.profile.avatar_url}
             name={winner.profile.login}
@@ -102,7 +101,7 @@ export default class Results extends React.Component {
             <ProfileList player={winner} />
           </Card>
           <Card
-            header={winner.score === loser.score ? 'Tie' : 'Loser'}
+            header={winner.score === loser.score ? "Tie" : "Loser"}
             subheader={`Score: ${loser.score}`}
             avatar={loser.profile.avatar_url}
             name={loser.profile.login}
@@ -111,10 +110,7 @@ export default class Results extends React.Component {
             <ProfileList player={loser} />
           </Card>
         </div>
-        <button
-          className="btn dark-btn btn-space"
-          onClick={this.props.onReset}
-        >
+        <button className="btn dark-btn btn-space" onClick={this.props.onReset}>
           Reset
         </button>
       </>

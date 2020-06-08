@@ -11,6 +11,7 @@ import {
 import { battle } from "../utils/api";
 import Card from "./Card";
 import Loading from "./Loading";
+import Tooltip from "./Tooltip";
 
 function ProfileList({ player }) {
   return (
@@ -20,16 +21,20 @@ function ProfileList({ player }) {
         {player.profile.name}
       </li>
       {player.profile.location && (
-        <li>
-          <FaCompass color="rgb(144, 115, 255)" size={22} />
-          {player.profile.location}
-        </li>
+        <Tooltip text={"User's Location"}>
+          <li>
+            <FaCompass color="rgb(144, 115, 255)" size={22} />
+            {player.profile.location}
+          </li>
+        </Tooltip>
       )}
       {player.profile.company && (
-        <li>
-          <FaBriefcase color="#795548" size={22} />
-          {player.profile.company}
-        </li>
+        <Tooltip text={"User's Company"}>
+          <li>
+            <FaBriefcase color="#795548" size={22} />
+            {player.profile.company}
+          </li>
+        </Tooltip>
       )}
       <li>
         <FaUsers color="rgb(129, 195, 245)" size={22} />

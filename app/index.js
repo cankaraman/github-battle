@@ -4,6 +4,7 @@ import "./index.css";
 import Battle from "./components/Battle";
 import Popular from "./components/Popular";
 import { ThemeProvider } from "./contexts/theme";
+import Nav from "./components/Nav";
 // Component
 // State
 // Lifecycle
@@ -26,8 +27,11 @@ class App extends React.Component {
   render() {
     return (
       <ThemeProvider value={this.state}>
-        <div className="container">
-          <Battle />
+        <div className={this.state.theme}>
+          <div className="container">
+            <Nav />
+            <Battle />
+          </div>
         </div>
       </ThemeProvider>
     );

@@ -49,6 +49,10 @@ li {
   color: inherit;
 }
 
+.nav li {
+    margin-right: 10px;
+}
+
 .grid {
   display: flex;
   flex-wrap: wrap;
@@ -56,6 +60,10 @@ li {
 
 .space-around {
   justify-content: space-around;
+}
+
+.space-between {
+  justify-content: space-between;
 }
 
 .header-lg {
@@ -124,13 +132,13 @@ li {
 }
 
 .light-btn {
-    color: #000;
-    background: #aaa8a8;
+  color: #000;
+  background: #aaa8a8;
 }
 
 .light-btn:disabled {
-    color: #292929;
-    background: #4a4a4a;
+  color: #292929;
+  background: #4a4a4a;
 }
 .card {
   margin: 10px 0;

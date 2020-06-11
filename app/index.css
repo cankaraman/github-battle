@@ -26,9 +26,9 @@ li {
 }
 
 .dark {
-    color: #DADADA;
-    background: #1c2022;
-    min-height: 100%;
+  color: #dadada;
+  background: #1c2022;
+  min-height: 100%;
 }
 
 .flex-center {
@@ -113,6 +113,25 @@ li {
   border-radius: 3px;
 }
 
+.bg-dark {
+  background: rgba(36, 40, 42);
+  border-radius: 3px;
+}
+
+.player-inputs .input-dark {
+  color: #dadada;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.light-btn {
+    color: #000;
+    background: #aaa8a8;
+}
+
+.light-btn:disabled {
+    color: #292929;
+    background: #4a4a4a;
+}
 .card {
   margin: 10px 0;
   width: 250px;

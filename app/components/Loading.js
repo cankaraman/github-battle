@@ -1,5 +1,5 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React, { useState, useEffect } from "react";
+import PropTypes, { func } from "prop-types";
 
 const styles = {
   content: {
@@ -12,36 +12,24 @@ const styles = {
   },
 };
 
-export default class Loading extends React.Component {
-  state = {
-    content: this.props.text,
-  };
+export default function Loading({ text = "Loading", speed = 300 }) {
+  const [content, setContent] = useState(text);
 
-  static propTypes = {
-    text: PropTypes.string,
-    speed: PropTypes.number,
-  };
-
-  static defaultProps = {
-    text: "Loading",
-    speed: 300,
-  };
-
-  componentDidMount() {
-    const { text, speed } = this.props;
-
-    this.interval = window.setInterval(() => {
-      this.state.content === `${text}...`
-        ? this.setState({ content: text })
-        : this.setState(({ content }) => ({ content: `${content}.` }));
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setContent((c) => {
+        return c === `${text}...` ? text : `${c}.`;
+      });
     }, speed);
-  }
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, [text, speed]);
 
-  componentWillUnmount() {
-    window.clearInterval(this.interval);
-  }
-
-  render() {
-    return <p style={styles.content}>{this.state.content}</p>;
-  }
+  return <p style={styles.content}>{content}</p>;
 }
+
+Loading.propTypes = {
+  text: PropTypes.string,
+  speed: PropTypes.number,
+};

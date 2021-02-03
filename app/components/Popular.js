@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import {
   FaUser,
@@ -90,12 +90,60 @@ ReposGrid.propTypes = {
   repos: PropTypes.array.isRequired,
 };
 
-export default class Popular extends React.Component {
-    state = {
-      selectedLanguage: "All",
-      repos: {},
-      error: null,
-    };
+export default function Popular() {
+  const [selectedLanguage, setSelectedLanguage] = useState("All");
+  const [repos, setRepos] = useState({});
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const updateLanguage = (selectedLanguage) => {
+    setSelectedLanguage(selectedLanguage);
+  };
+
+  useEffect(() => {
+    if (!repos[selectedLanguage]) {
+      setLoading(true);
+      setError(null);
+      fetchPopularRepos(selectedLanguage)
+        .then((data) => {
+          setRepos((repos) => {
+            return {
+              ...repos,
+              [selectedLanguage]: data,
+            };
+          });
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.warn("Error fetching repos: ", error);
+          setLoading(false);
+          setError("There was an error fetching the repositories.");
+        });
+    }
+  }, [selectedLanguage]);
+
+  return (
+    <>
+      <LangaugesNav
+        selected={selectedLanguage}
+        onUpdateLanguage={updateLanguage}
+      />
+
+      {loading && <Loading text="Fetching Repos" />}
+
+      {error && <p className="center-text error">{error}</p>}
+
+      {repos[selectedLanguage] && <ReposGrid repos={repos[selectedLanguage]} />}
+    </>
+  );
+}
+
+class Pop extends React.Component {
+  state = {
+    selectedLanguage: "All",
+    repos: {},
+    error: null,
+  };
 
   componentDidMount() {
     this.updateLanguage(this.state.selectedLanguage);
@@ -117,7 +165,7 @@ export default class Popular extends React.Component {
             },
           }));
         })
-        .catch(() => {
+        .catch((error) => {
           console.warn("Error fetching repos: ", error);
 
           this.setState({
@@ -125,13 +173,13 @@ export default class Popular extends React.Component {
           });
         });
     }
-  }
+  };
 
   isLoading = () => {
     const { selectedLanguage, repos, error } = this.state;
 
     return !repos[selectedLanguage] && error === null;
-  }
+  };
 
   render() {
     const { selectedLanguage, repos, error } = this.state;

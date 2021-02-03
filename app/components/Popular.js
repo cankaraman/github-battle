@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useRef, useReducer, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import {
   FaUser,
@@ -90,37 +90,47 @@ ReposGrid.propTypes = {
   repos: PropTypes.array.isRequired,
 };
 
+function repoReducer(state, action) {
+  if (action.type === "success") {
+    return {
+      ...state,
+      [action.selectedLanguage]: action.repos,
+      error: null,
+    };
+  } else if (action.type === "fail") {
+    return {
+      ...state,
+      error: action.error.message,
+    };
+  } else {
+    throw new Error("Action does not exists");
+  }
+}
+
 export default function Popular() {
   const [selectedLanguage, setSelectedLanguage] = useState("All");
-  const [repos, setRepos] = useState({});
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [state, dispatch] = useReducer(repoReducer, { error: null });
+
+  const fetchedLanguagesRef = useRef([]);
+
+  useEffect(() => {
+    if (fetchedLanguagesRef.current.includes(selectedLanguage) === false) {
+      fetchPopularRepos(selectedLanguage)
+        .then((repos) => {
+          fetchedLanguagesRef.current.push(selectedLanguage);
+          dispatch({ type: "success", repos, selectedLanguage });
+        })
+        .catch((er) => {
+          dispatch({ type: "fail", error: er });
+        });
+    }
+  }, [fetchedLanguagesRef, selectedLanguage]);
 
   const updateLanguage = (selectedLanguage) => {
     setSelectedLanguage(selectedLanguage);
   };
 
-  useEffect(() => {
-    if (!repos[selectedLanguage]) {
-      setLoading(true);
-      setError(null);
-      fetchPopularRepos(selectedLanguage)
-        .then((data) => {
-          setRepos((repos) => {
-            return {
-              ...repos,
-              [selectedLanguage]: data,
-            };
-          });
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.warn("Error fetching repos: ", error);
-          setLoading(false);
-          setError("There was an error fetching the repositories.");
-        });
-    }
-  }, [selectedLanguage]);
+  const isLoading = () => !state[selectedLanguage] && state.error === null;
 
   return (
     <>
@@ -129,11 +139,11 @@ export default function Popular() {
         onUpdateLanguage={updateLanguage}
       />
 
-      {loading && <Loading text="Fetching Repos" />}
+      {isLoading() && <Loading text="Fetching Repos" />}
 
-      {error && <p className="center-text error">{error}</p>}
+      {state.error && <p className="center-text error">{state.error}</p>}
 
-      {repos[selectedLanguage] && <ReposGrid repos={repos[selectedLanguage]} />}
+      {state[selectedLanguage] && <ReposGrid repos={state[selectedLanguage]} />}
     </>
   );
 }

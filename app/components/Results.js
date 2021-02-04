@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useReducer, useState, useEffect } from "react";
+
 import PropTypes from "prop-types";
 import {
   FaCompass,
@@ -54,71 +55,86 @@ ProfileList.propTypes = {
   player: PropTypes.object.isRequired,
 };
 
-export default class Results extends React.Component {
-  state = {
+function resultReducer(state, action) {
+  if (action.type === "success") {
+    return {
+      ...state,
+      winner: action.winner,
+      loser: action.loser,
+      error: null,
+      loading: false,
+    };
+  } else if (action.type === "error") {
+    return {
+      ...state,
+      winner: null,
+      loser: null,
+      error: action.message,
+      loading: false,
+    };
+  } else {
+    throw new Error("Action type not supported");
+  }
+}
+
+export default function Results(props) {
+  const { playerOne, playerTwo } = queryString.parse(props.location.search);
+  const [state, dispatch] = useReducer(resultReducer, {
+    loading: true,
     winner: null,
     loser: null,
     error: null,
-    loading: true,
-  };
-
-  componentDidMount() {
-    const { playerOne, playerTwo } = queryString.parse(
-      this.props.location.search
-    );
+  });
+  useEffect(() => {
     battle([playerOne, playerTwo])
-      .then((players) => {
-        this.setState({
+      .then((players) =>
+        dispatch({
+          type: "success",
           winner: players[0],
           loser: players[1],
-          error: null,
-          loading: false,
-        });
-      })
-      .catch(({ message }) => {
-        this.setState({
-          error: message,
-          loading: false,
-        });
-      });
+        })
+      )
+      .catch((message) =>
+        dispatch({
+          type: "error",
+          message,
+        })
+      );
+  }, [playerOne, playerTwo]);
+
+  if (state.loading) {
+    return <Loading text="Battling" />;
   }
 
-  render() {
-    const { winner, loser, error, loading } = this.state;
-
-    if (loading) {
-      return <Loading text="Battling" />;
-    }
-
-    if (error) {
-      return <p className="center-text error">{error}</p>;
-    }
-    return (
-      <>
-        <div className="grid space-around container-sm">
-          <Card
-            header={winner.score === loser.score ? "Tie" : "Winner"}
-            subheader={`Score: ${winner.score}`}
-            avatar={winner.profile.avatar_url}
-            name={winner.profile.login}
-            href={winner.profile.html_url}
-          >
-            <ProfileList player={winner} />
-          </Card>
-          <Card
-            header={winner.score === loser.score ? "Tie" : "Loser"}
-            subheader={`Score: ${loser.score}`}
-            avatar={loser.profile.avatar_url}
-            name={loser.profile.login}
-            href={loser.profile.html_url}
-          >
-            <ProfileList player={loser} />
-          </Card>
-        </div>
-        <Link className="btn dark-btn btn-space" to="/battle">
-          Reset
-        </Link>
-      </>
-    );
+  if (state.error) {
+    return <p className="center-text error">{state.error}</p>;
   }
+
+  return (
+    <>
+      <div className="grid space-around container-sm">
+        <Card
+          header={state.winner.score === state.loser.score ? "Tie" : "Winner"}
+          subheader={`Score: ${state.winner.score}`}
+          avatar={state.winner.profile.avatar_url}
+          name={state.winner.profile.login}
+          href={state.winner.profile.html_url}
+        >
+          <ProfileList player={state.winner} />
+        </Card>
+        <Card
+          header={state.winner.score === state.loser.score ? "Tie" : "Loser"}
+          subheader={`Score: ${state.loser.score}`}
+          avatar={state.loser.profile.avatar_url}
+          name={state.loser.profile.login}
+          href={state.loser.profile.html_url}
+        >
+          <ProfileList player={state.loser} />
+        </Card>
+      </div>
+      <Link className="btn dark-btn btn-space" to="/battle">
+        Reset
+      </Link>
+    </>
+  );
 }
